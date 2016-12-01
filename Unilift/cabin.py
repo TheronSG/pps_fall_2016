@@ -1,6 +1,8 @@
 import time
 from doors_sensor import DoorsSensor
 from weight_sensor import WeightSensor
+from speaker import Speaker
+from microphone import Microphone
 from threading import Thread
 
 
@@ -20,12 +22,20 @@ class Cabin:
         self.doors_state = self.DOORS['CLOSED']
         self.doors_sensor = DoorsSensor(self)
         self.weight_sensor = WeightSensor(self)
+        self.speaker = Speaker(self)
+        self.microphone = Microphone(self)
         self.doors_closing_stage = self.DOORS_CLOSED_STAGE
-        self.status = False
+        self.status = True
         self._threads = []
 
     def set_end_status(self):
         self.status = False
+
+    def start_record_speaker_message(self):
+        self.microphone.set_true_state()
+
+    def send_message_to_dispatcher_(self, message):
+        self.speaker.play_speech(message)
 
     def light_on(self):
         if self.light_state != self.LIGHT['ON']:
@@ -65,10 +75,10 @@ class Cabin:
     def main_cycle(self):
         self._threads.append(Thread(target=self.doors_sensor.main_cycle))
         self._threads.append(Thread(target=self.weight_sensor.main_cycle))
+        self._threads.append(Thread(target=self.microphone.main_cycle()))
 
         for thread in self._threads:
             thread.start()
-        self.status = True
         doors_opened_time = 0
 
         print('[Cabin {}] Running...'.format(self.cabin_num))
@@ -93,6 +103,7 @@ class Cabin:
             if not self.status:
                 self.doors_sensor.set_end_status()
                 self.weight_sensor.set_end_status()
+                self.microphone.set_end_status()
                 break
             time.sleep(self.SLEEPING_TIME)
 

@@ -1,4 +1,5 @@
 from server import Server
+from call_dispather_button import CallDispatcherButton
 from threading import Thread
 
 
@@ -90,6 +91,7 @@ def handle(server, command):
         for i in range(server.ELEVATORS_NUM):
             server.engines[i].set_end_status()
             server.cabins[i].set_end_status()
+            call_dispatcher_buttons[i].set_end_status()
         return True
     else:
         print('Wrong command: {}'.format(command))
@@ -98,7 +100,15 @@ def handle(server, command):
 
 if __name__ == '__main__':
     server = Server()
-    Thread(target=server.run()).start()
+    call_dispatcher_buttons = list()
+    threads = list()
+    threads.append(Thread(target=server.run()))
+    for i in range(server.ELEVATORS_NUM):
+        call_dispatcher_buttons.append(server.cabins[i])
+        threads.append(Thread(target=call_dispatcher_buttons[i].press()))
+
+    for thread in threads:
+        thread.start()
 
     while True:
         print('Choose action:')
@@ -107,3 +117,6 @@ if __name__ == '__main__':
         status = handle(server, command)
         if status:
             break
+
+    for thread in threads:
+        thread.join()

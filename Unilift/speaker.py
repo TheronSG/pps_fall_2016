@@ -1,23 +1,13 @@
-import time
-
-
 class Speaker:
     SLEEP_TIME = 0.33
 
     def __init__(self, cabin_link):
         self.cabin_link = cabin_link
-        self.state = False
-        self.status = True
 
     def play_speech(self, message):
+        print('[Speaker {}] Type dispatchers\' answer'.format(self.cabin_link.cabin_num))
         message = input()
-    # TODO: Нужна ли вторая функция?
+        print('[Speaker {}] Dispatcher says: '.format(self.cabin_link.cabin_num) + message)
 
-    def main_cycle(self):
+    def init(self):
         print('[Speaker {}] Running...'.format(self.cabin_link.cabin_num))
-        while True:
-            if self.state:
-                self.start_play_speech()
-                # TODO: Что еще?
-            time.sleep(self.SLEEP_TIME)
-
