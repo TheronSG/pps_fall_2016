@@ -8,18 +8,15 @@ class Microphone:
         self.cabin_link = cabin_link
         self.state = False
 
-    def start_record_speech(self):
+    def record_speech(self):
         message = input()
+        self.cabin_link
         # TODO: А что дальше делать? По идеи нужно персылать сообщение диспетчеру.
-
-    #     TODO: Понять, нужна ли эта функция, зачем вообще разделение этих функций
-    def stop_record_speech(self):
-        pass
 
     def main_cycle(self):
         print('[Microphone {}] Running...'.format(self.cabin_link.cabin_num))
         while True:
             if self.state:
-                self.start_record_speech()
+                self.record_speech()
                 # TODO: Что то тут еще надо написать...
             time.sleep(self.SLEEP_TIME)

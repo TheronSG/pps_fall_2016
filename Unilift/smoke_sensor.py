@@ -15,9 +15,8 @@ class SmokeSensor:
         return self.smokeThreshold
 
     def main_cycle(self):
-        print('[Smoke Sensor {}] Running...'.format(self.server_link.cabin_num))
+        print('[Smoke Sensor] Running...')
         while True:
             if self.check_smoke_level():
-                # TODO(): придумать интерфейс для передачи информации о дыме
-                pass
+                self.server_link.smoke_exit()
             time.sleep(self.SLEEP_TIME)

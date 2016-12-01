@@ -1,15 +1,16 @@
 import time
 
-# TODO: Speaker - по-английски динамик
+
 class Speaker:
     SLEEP_TIME = 0.33
 
     def __init__(self, cabin_link):
         self.cabin_link = cabin_link
         self.state = False
+        self.status = True
 
-    def start_play_speech(self, message):
-        print (message)
+    def play_speech(self, message):
+        message = input()
     # TODO: Нужна ли вторая функция?
 
     def main_cycle(self):
