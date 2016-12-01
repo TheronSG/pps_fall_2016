@@ -4,19 +4,18 @@ import time
 class SmokeSensor:
     SLEEP_TIME = 0.33
 
-    def __init__(self, cabin_link):
-        self.cabin_link = cabin_link
-        self.smokeThreeshold = False
-        # TODO: Зачем @smokeThreeshold int? Типо уровень? Не проще сделать булево значение?
+    def __init__(self, server_link):
+        self.server_link = server_link
+        self.smokeThreshold = False
 
     def set_smoke(self):
-        self.smokeThreeshold = True
+        self.smokeThreshold = True
 
     def check_smoke_level(self):
-        return self.smokeThreeshold
+        return self.smokeThreshold
 
     def main_cycle(self):
-        print('[Smoke Sensor {}] Running...'.format(self.cabin_link.cabin_num))
+        print('[Smoke Sensor {}] Running...'.format(self.server_link.cabin_num))
         while True:
             if self.check_smoke_level():
                 # TODO(): придумать интерфейс для передачи информации о дыме

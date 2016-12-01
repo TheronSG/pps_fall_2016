@@ -10,18 +10,19 @@ class DoorsSensor:
 
     # TODO: функция для выхода
     def set_end_status(self):
-        self.status = True
+        self.status = False
 
     @staticmethod
     def check_barrier():
         return False
 
     def main_cycle(self):
+        self.status = True
         print('[Doors Sensor {}] Running...'.format(self.cabin_link.cabin_num))
         while True:
             if (self.cabin_link.get_current_state()['doors_state'] == 'CLOSING'
                     and self.check_barrier()):
                 self.cabin_link.open_doors()
-            if self.status:
+            if not self.status:
                 break
             time.sleep(self.SLEEP_TIME)

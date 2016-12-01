@@ -2,29 +2,50 @@ import time
 
 
 class Engine:
-    SLEEP_TIME = 0.5
+    SLEEP_TIME = 0.33
+    MOTION_STATE = {'MOVING': 1, 'WAITING': 0,
+                    1: 'MOVING', 0: 'WAITING'}
 
-    def __init__(self):
-        state = False
-        motion_state = None
-        motion_direction = None
-        current_floor = None
-        target_floor = None
+    def __init__(self, server_link, engine_num):
+        self.server_link = server_link
+        self.engine_num = engine_num
+        self.motion_state = self.MOTION_STATE['WAITING']
+        self.motion_stage = 0
+        self.current_floor = None
+        self.target_floor = None
         self.status = False
 
-    # TODO: функия для выхода из программы
     def set_end_status(self):
-        self.status = True
+        self.status = False
+
+    def get_motion_params(self):
+        return {'current_floor': self.current_floor,
+                'target_floor': self.target_floor,
+                'motion_state': self.MOTION_STATE[self.motion_state]}
 
     def main_cycle(self):
-        while True:
-            if self.status:
-                break
+        self.status = True
+        while self.status:
+            if self.motion_state == self.MOTION_STATE['MOVING']:
+                self.motion_stage = (self.motion_stage + 1) % 4
+                if self.motion_stage == 0:
+                    if self.target_floor - self.current_floor > 0:
+                        self.current_floor += 1
+                    elif self.target_floor - self.current_floor < 0:
+                        self.current_floor -= 1
+                    if self.current_floor == self.target_floor:
+                        self.target_floor = None
+                        self.motion_state = self.MOTION_STATE['WAITING']
+                    self.server_link.receive_motion_params(self.engine_num,
+                                                           self.get_motion_params())
             time.sleep(self.SLEEP_TIME)
 
-
-    def set_target_floor(self):
-        pass
+    def set_target_floor(self, target_floor):
+        self.target_floor = target_floor
+        self.motion_state = self.MOTION_STATE['MOVING']
 
     def stop_motion(self):
-        pass
+        if self.target_floor - self.current_floor > 0:
+            self.target_floor = self.current_floor + 1
+        elif self.target_floor - self.current_floor < 0:
+            self.target_floor = self.current_floor + 1

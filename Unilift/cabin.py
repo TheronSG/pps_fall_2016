@@ -23,17 +23,19 @@ class Cabin:
         self.status = False
         self._threads = []
 
-    # TODO: функция для выхода
     def set_end_status(self):
-        self.status = True
+        self.status = False
 
     def light_on(self):
-        self.light_state = self.LIGHT['ON']
-        print('[Cabin {}] Light was turned on'.format(self.cabin_num))
+        if self.light_state != self.LIGHT['ON']:
+            self.light_state = self.LIGHT['ON']
+            print('[Cabin {}] Light was turned on'.format(self.cabin_num))
 
     def light_off(self):
-        self.light_state = self.LIGHT['OFF']
-        print('[Cabin {}] Light was turned off'.format(self.cabin_num))
+        if (self.light_state != self.LIGHT['OFF'] and
+                    self.doors_state not in (self.DOORS['OPENING'], self.DOORS['OPENED'], self.DOORS['CLOSING'])):
+            self.light_state = self.LIGHT['OFF']
+            print('[Cabin {}] Light was turned off'.format(self.cabin_num))
 
     def close_doors(self):
         if self.doors_state not in (self.DOORS['CLOSED'], self.DOORS['CLOSING']):
@@ -50,6 +52,10 @@ class Cabin:
         else:
             print('[Cabin {}] Doors already opened'.format(self.cabin_num))
 
+    def wait_doors(self):
+        while self.doors_state not in (self.DOORS['OPENED'], self.DOORS['CLOSED']):
+            time.sleep(0.01)
+
     def get_current_state(self):
         return {'doors_state': self.DOORS[self.doors_state],
                 'light_state': self.LIGHT[self.light_state],
@@ -61,26 +67,25 @@ class Cabin:
 
         for thread in self._threads:
             thread.start()
+        self.status = True
 
         print('[Cabin {}] Running...'.format(self.cabin_num))
-        while True:
+        while self.status:
             if self.doors_state == self.DOORS['CLOSING']:
                 self.doors_closing_stage += 1
                 if self.doors_closing_stage >= self.DOORS_CLOSED_STAGE:
                     self.doors_state = self.DOORS['CLOSED']
                     self.doors_closing_stage = self.DOORS_CLOSED_STAGE
                     print('[Cabin {}] Doors closed'.format(self.cabin_num))
-                    self.light_off()
             elif self.doors_state == self.DOORS['OPENING']:
                 self.doors_closing_stage -= 1
                 if self.doors_closing_stage <= self.DOORS_OPENED_STAGE:
                     self.doors_state = self.DOORS['OPENED']
                     self.doors_closing_stage = self.DOORS_OPENED_STAGE
                     print('[Cabin {}] Doors opened'.format(self.cabin_num))
-            if self.status:
+            if not self.status:
                 self.doors_sensor.set_end_status()
                 self.weight_sensor.set_end_status()
-                break
             time.sleep(self.SLEEPING_TIME)
 
         for thread in self._threads:

@@ -11,13 +11,14 @@ class Server:
         self.engines = []
         self.cabins = []
         for i in range(self.ELEVATORS_NUM):
-            engine = Engine()
+            engine = Engine(self, i)
             self.engines.append(engine)
             cabin = Cabin(i)
             self.cabins.append(cabin)
         self._threads = []
 
-    def print_available_command(self):
+    @staticmethod
+    def print_available_command():
         print('To open door type: open <lift number>')
         print('To close door type: close <lift number>')
         print('To exit programme type: exit')
@@ -42,9 +43,8 @@ class Server:
             if parts[1] > self.ELEVATORS_NUM or parts[1] < 1:
                 print('Error! The {} lift does not exist.'.format(parts[1]))
                 return False
-            print(self.cabins[parts[1]].get_current_state())
-            self.cabins[parts[1]].open_doors()
-            print(self.cabins[parts[1]].get_current_state())
+            self.cabins[parts[1] - 1].open_doors()
+            self.cabins[parts[1] - 1].wait_doors()
 
         elif parts[0] == 'close':
             if len(parts) > 2 or len(parts) == 1:
@@ -58,9 +58,9 @@ class Server:
             if parts[1] > self.ELEVATORS_NUM or parts[1] < 1:
                 print('Error! The {} lift does not exist.'.format(parts[1]))
                 return False
-            print(self.cabins[parts[1]].get_current_state())
-            self.cabins[parts[1]].close_doors()
-            print(self.cabins[parts[1]].get_current_state())
+            self.cabins[parts[1] - 1].close_doors()
+            self.cabins[parts[1] - 1].wait_doors()
+
         elif parts[0] == 'call':
             if len(parts) > 2 or len(parts) == 1:
                 print('Error! Expected 1 argument for command \'call\', got {}'.format(len(parts) - 1))
@@ -76,6 +76,7 @@ class Server:
             # TODO: реализовать данную функцию, только ли вызов лифта тут будет обрабатываться?
 
             print(self.cabins[parts[1]].get_current_state())
+
         elif parts[0] == 'smoke':
             if len(parts) > 2 or len(parts) == 1:
                 print('Error! Expected 1 argument for command \'smoke\', got {}'.format(len(parts) - 1))
@@ -93,6 +94,7 @@ class Server:
             # TODO: реализовать данную функцию, и скорее всего здесь нужно выводить информацию о состояниях всех лифтов
 
             print(self.cabins[parts[1]].get_current_state())
+
         elif parts[0] == 'go':
             if len(parts) > 2 or len(parts) == 1:
                 print('Error! Expected 1 argument for command \'close\', got {}'.format(len(parts) - 1))
@@ -108,6 +110,7 @@ class Server:
             print(self.cabins[parts[1]].get_current_state())
             self.cabins[parts[1]].close_doors()
             print(self.cabins[parts[1]].get_current_state())
+
         elif parts[0] == 'exit':
             if len(parts) > 1:
                 print('Error! Expected 0 argument for command \'exit\', got {}'.format(len(parts) - 1))
@@ -119,6 +122,9 @@ class Server:
         else:
             print('Wrong command: {}'.format(command))
         return False
+
+    def receive_motion_params(self, engine_num):
+        pass
 
     def run(self):
         for i in range(self.ELEVATORS_NUM):
@@ -135,19 +141,8 @@ class Server:
             self.print_available_command()
             command = input()
             status = self.handle(command)
-            if status == True:
+            if status:
                 break
-
-        # print(self.cabins[0].get_current_state())
-        # print(self.cabins[1].get_current_state())
-        # self.cabins[1].open_doors()
-        # self.cabins[0].open_doors()
-        # print(self.cabins[0].get_current_state())
-        # print(self.cabins[1].get_current_state())
-        # self.cabins[0].close_doors()
-        # self.cabins[1].close_doors()
-        # print(self.cabins[0].get_current_state())
-        # print(self.cabins[1].get_current_state())
 
         for thread in self._threads:
             thread.join()

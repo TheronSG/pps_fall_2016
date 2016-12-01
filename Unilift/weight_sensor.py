@@ -10,15 +10,15 @@ class WeightSensor:
         self.min_weight = 10
         self.max_weight = 100
         self.cabin_link = cabin_link
+        self.weight = 0
         self.status = False
 
     # TODO: функция для выхода
     def set_end_status(self):
-        self.status = True
+        self.status = False
 
-    @staticmethod
-    def get_current_weight():
-        return 42
+    def get_current_weight(self):
+        return self.weight
 
     def get_weight_status(self):
         current_weight = self.get_current_weight()
@@ -33,9 +33,13 @@ class WeightSensor:
 
     def main_cycle(self):
         print('[Weight Sensor {}] Running...'.format(self.cabin_link.cabin_num))
-        while True:
-            if not(self.min_weight <= self.get_current_weight() <= self.max_weight):
+        self.status = True
+        while self.status:
+            if self.min_weight <= self.get_current_weight() <= self.max_weight:
+                self.cabin_link.light_on()
+            elif self.get_current_weight() > self.max_weight:
+                self.cabin_link.light_on()
                 pass
-            if self.status:
-                break
+            else:
+                self.cabin_link.light_off()
             time.sleep(self.SLEEP_TIME)
