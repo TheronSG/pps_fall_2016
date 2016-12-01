@@ -7,16 +7,22 @@ class Microphone:
     def __init__(self, cabin_link):
         self.cabin_link = cabin_link
         self.state = False
+        self.status = True
 
     def record_speech(self):
         message = input()
-        self.cabin_link
-        # TODO: А что дальше делать? По идеи нужно персылать сообщение диспетчеру.
+        self.cabin_link.send_message_to_server(message)
+
+    def set_true_state(self):
+        self.state = True
+
+    def set_end_status(self):
+        self.status = False
 
     def main_cycle(self):
         print('[Microphone {}] Running...'.format(self.cabin_link.cabin_num))
-        while True:
+        while self.status:
             if self.state:
                 self.record_speech()
-                # TODO: Что то тут еще надо написать...
+                self.state = False
             time.sleep(self.SLEEP_TIME)

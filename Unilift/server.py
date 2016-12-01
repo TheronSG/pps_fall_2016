@@ -43,12 +43,6 @@ class Server:
             self.engines[i].set_end_status()
             self.cabins[i].set_end_status()
 
-    def send_message_to_dispatcher(self, message):
-        pass
-
-    def send_message_to_passenger(self, message):
-        pass
-
     def receive_motion_params(self, engine_num, motion_params):
         self.motions_params[engine_num] = motion_params
 

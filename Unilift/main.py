@@ -100,8 +100,15 @@ def handle(server, command):
 
 if __name__ == '__main__':
     server = Server()
-    server_thread = Thread(target=server.run)
-    server_thread.start()
+
+    call_dispatcher_buttons = []
+    threads = [Thread(target=server.run)]
+    for i in range(server.ELEVATORS_NUM):
+        call_dispatcher_buttons.append(server.cabins[i])
+        # threads.append(Thread(target=call_dispatcher_buttons[i].press))
+
+    for thread in threads:
+        thread.start()
 
     time.sleep(0.5)
 
@@ -113,4 +120,5 @@ if __name__ == '__main__':
         if status:
             break
 
-    server_thread.join()
+    for thread in threads:
+        thread.join()
