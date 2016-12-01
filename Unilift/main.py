@@ -1,10 +1,12 @@
 from server import Server
 from threading import Thread
+import time
 
 
 def print_available_command():
     print('To open door type: open <lift number>')
     print('To close door type: close <lift number>')
+    print('To call elevator type: call <floor number>')
     print('To exit programme type: exit')
     # TODO: написать остальные команды
 
@@ -57,8 +59,10 @@ def handle(server, command):
         except ValueError:
             print('Error! Type of parameter for command \'call\' must be int')
             return False
-
-        # TODO
+        if parts[1] > server.FLOORS_NUMBER or parts[1] < 1:
+            print('Error! The {} floor does not exist.'.format(parts[1]))
+            return False
+        server.call_cabin(parts[1] - 1)
 
     elif parts[0] == 'smoke':
         if len(parts) > 1:
@@ -87,9 +91,7 @@ def handle(server, command):
         if len(parts) > 1:
             print('Error! Expected 0 argument for command \'exit\', got {}'.format(len(parts) - 1))
             return False
-        for i in range(server.ELEVATORS_NUM):
-            server.engines[i].set_end_status()
-            server.cabins[i].set_end_status()
+        server.set_end_status()
         return True
     else:
         print('Wrong command: {}'.format(command))
@@ -98,12 +100,17 @@ def handle(server, command):
 
 if __name__ == '__main__':
     server = Server()
-    Thread(target=server.run()).start()
+    server_thread = Thread(target=server.run)
+    server_thread.start()
 
+    time.sleep(0.5)
+
+    print('Choose action:')
+    print_available_command()
     while True:
-        print('Choose action:')
-        print_available_command()
         command = input()
         status = handle(server, command)
         if status:
             break
+
+    server_thread.join()

@@ -11,7 +11,7 @@ class Engine:
         self.engine_num = engine_num
         self.motion_state = self.MOTION_STATE['WAITING']
         self.motion_stage = 0
-        self.current_floor = None
+        self.current_floor = 0
         self.target_floor = None
         self.status = False
 
@@ -36,6 +36,8 @@ class Engine:
                     if self.current_floor == self.target_floor:
                         self.target_floor = None
                         self.motion_state = self.MOTION_STATE['WAITING']
+                    print('[Engine {}] Updated floor: {}'.format(self.engine_num,
+                                                                 self.current_floor + 1))
                     self.server_link.receive_motion_params(self.engine_num,
                                                            self.get_motion_params())
             time.sleep(self.SLEEP_TIME)
@@ -43,9 +45,11 @@ class Engine:
     def set_target_floor(self, target_floor):
         self.target_floor = target_floor
         self.motion_state = self.MOTION_STATE['MOVING']
+        self.server_link.receive_motion_params(self.engine_num, self.get_motion_params())
 
     def stop_motion(self):
         if self.target_floor - self.current_floor > 0:
             self.target_floor = self.current_floor + 1
         elif self.target_floor - self.current_floor < 0:
             self.target_floor = self.current_floor + 1
+        self.server_link.receive_motion_params(self.engine_num, self.get_motion_params())

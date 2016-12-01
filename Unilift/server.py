@@ -22,16 +22,19 @@ class Server:
             self.engines.append(engine)
             cabin = Cabin(i)
             self.cabins.append(cabin)
-            self.motions_params.append({})
+            self.motions_params.append(engine.get_motion_params())
         self._threads = []
         self.status = False
 
+    def set_end_status(self):
+        self.status = False
+
     def call_cabin(self, target_floor):
-        elevator_num = self.motion_algo.add_target_floor(self.motions_params,
-                                                         target_floor,
-                                                         elevator_num=None)
+        elevator_num, new_target_floor = self.motion_algo.add_target_floor(self.motions_params,
+                                                                           target_floor,
+                                                                           elevator_num=None)
         if elevator_num is not None:
-            self.engines[elevator_num].set_target_floor(target_floor)
+            self.engines[elevator_num].set_target_floor(new_target_floor)
 
     def smoke_exit(self):
         print("Alarm! Smoke is detected!")
@@ -53,15 +56,16 @@ class Server:
         for i in range(self.ELEVATORS_NUM):
             self._threads.append(Thread(target=self.engines[i].main_cycle))
             self._threads.append(Thread(target=self.cabins[i].main_cycle))
-
-        self._threads.append(Thread(target=self.smoke_sensor.main_cycle()))
+        self._threads.append(Thread(target=self.smoke_sensor.main_cycle))
 
         for thread in self._threads:
             thread.start()
 
-        waiting_states = [True] * self.ELEVATORS_NUM
+        print('[Server] Running...')
+
+        waiting_states = [False] * self.ELEVATORS_NUM
         self.status = True
-        while self.status:
+        while True:
             for i, motion_params in enumerate(self.motions_params):
                 if motion_params['motion_state'] == 'WAITING':
                     cabin_state = self.cabins[i].get_current_state()
@@ -73,7 +77,13 @@ class Server:
                             target_floor = self.motion_algo.get_next_target(motion_params['current_floor'], i)
                             if target_floor is not None:
                                 self.engines[i].set_target_floor(target_floor)
-                            waiting_states[i] = True
+                                waiting_states[i] = True
+            if not self.status:
+                for i in range(self.ELEVATORS_NUM):
+                    self.engines[i].set_end_status()
+                    self.cabins[i].set_end_status()
+                self.smoke_sensor.set_end_status()
+                break
             time.sleep(self.SLEEP_TIME)
 
         for thread in self._threads:

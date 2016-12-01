@@ -7,6 +7,10 @@ class SmokeSensor:
     def __init__(self, server_link):
         self.server_link = server_link
         self.smokeThreshold = False
+        self.status = False
+
+    def set_end_status(self):
+        self.status = False
 
     def set_smoke(self):
         self.smokeThreshold = True
@@ -15,8 +19,9 @@ class SmokeSensor:
         return self.smokeThreshold
 
     def main_cycle(self):
+        self.status = True
         print('[Smoke Sensor] Running...')
-        while True:
+        while self.status:
             if self.check_smoke_level():
                 self.server_link.smoke_exit()
             time.sleep(self.SLEEP_TIME)
