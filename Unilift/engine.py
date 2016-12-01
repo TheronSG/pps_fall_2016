@@ -27,7 +27,6 @@ class Engine:
         self.status = True
         while self.status:
             if self.motion_state == self.MOTION_STATE['MOVING']:
-                self.motion_stage = (self.motion_stage + 1) % 4
                 if self.motion_stage == 0:
                     if self.target_floor - self.current_floor > 0:
                         self.current_floor += 1
@@ -36,10 +35,11 @@ class Engine:
                     if self.current_floor == self.target_floor:
                         self.target_floor = None
                         self.motion_state = self.MOTION_STATE['WAITING']
-                    print('[Engine {}] Updated floor: {}'.format(self.engine_num,
+                    print('[Engine {}] Current floor: {}'.format(self.engine_num,
                                                                  self.current_floor + 1))
                     self.server_link.receive_motion_params(self.engine_num,
                                                            self.get_motion_params())
+                self.motion_stage = (self.motion_stage + 1) % 4
             time.sleep(self.SLEEP_TIME)
 
     def set_target_floor(self, target_floor):
