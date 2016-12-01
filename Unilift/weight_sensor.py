@@ -13,7 +13,6 @@ class WeightSensor:
         self.weight = 0
         self.status = False
 
-    # TODO: функция для выхода
     def set_end_status(self):
         self.status = False
 

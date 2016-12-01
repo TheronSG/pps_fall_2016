@@ -10,7 +10,8 @@ class Cabin:
     DOORS = {'OPENED': 3, 'OPENING': 2, 'CLOSING': 1, 'CLOSED': 0,
              3: 'OPENED', 2: 'OPENING', 1: 'CLOSING', 0: 'CLOSED'}
     DOORS_OPENED_STAGE = 0
-    DOORS_CLOSED_STAGE = 9
+    DOORS_CLOSED_STAGE = 4
+    DOORS_OPENED_TIME = 10
     SLEEPING_TIME = 0.33
 
     def __init__(self, cabin_num):
@@ -68,9 +69,10 @@ class Cabin:
         for thread in self._threads:
             thread.start()
         self.status = True
+        doors_opened_time = 0
 
         print('[Cabin {}] Running...'.format(self.cabin_num))
-        while self.status:
+        while True:
             if self.doors_state == self.DOORS['CLOSING']:
                 self.doors_closing_stage += 1
                 if self.doors_closing_stage >= self.DOORS_CLOSED_STAGE:
@@ -83,9 +85,15 @@ class Cabin:
                     self.doors_state = self.DOORS['OPENED']
                     self.doors_closing_stage = self.DOORS_OPENED_STAGE
                     print('[Cabin {}] Doors opened'.format(self.cabin_num))
+            elif self.doors_state == self.DOORS['OPENED']:
+                doors_opened_time += 1
+                if doors_opened_time == self.DOORS_OPENED_TIME:
+                    doors_opened_time = 0
+                    self.close_doors()
             if not self.status:
                 self.doors_sensor.set_end_status()
                 self.weight_sensor.set_end_status()
+                break
             time.sleep(self.SLEEPING_TIME)
 
         for thread in self._threads:
