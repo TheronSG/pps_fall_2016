@@ -31,7 +31,7 @@ class WeightSensor:
         return {'weight': current_weight, 'weight_status': weight_status}
 
     def main_cycle(self):
-        print('[Weight Sensor {}] Running...'.format(self.cabin_link.cabin_num))
+        print('[Weight Sensor {}] Running...'.format(self.cabin_link.cabin_num + 1))
         self.status = True
         while self.status:
             if self.min_weight <= self.get_current_weight() <= self.max_weight:

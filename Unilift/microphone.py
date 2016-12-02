@@ -10,8 +10,9 @@ class Microphone:
         self.status = True
 
     def record_speech(self):
+        print('[Microphone {}] Type your request'.format(self.cabin_link.cabin_num + 1))
         message = input()
-        self.cabin_link.send_message_to_server(message)
+        self.cabin_link.send_message_to_dispatcher(message)
 
     def set_true_state(self):
         self.state = True
@@ -20,7 +21,7 @@ class Microphone:
         self.status = False
 
     def main_cycle(self):
-        print('[Microphone {}] Running...'.format(self.cabin_link.cabin_num))
+        print('[Microphone {}] Running...'.format(self.cabin_link.cabin_num + 1))
         while self.status:
             if self.state:
                 self.record_speech()

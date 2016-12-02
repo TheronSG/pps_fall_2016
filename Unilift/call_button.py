@@ -1,5 +1,11 @@
+import time
+
+
 class CallButton:
-    def __init__(self, cabin_link):
-        self.cabin_link = cabin_link
-        self.floor = 1
-# TODO: Что здесь еще должно быть?
+    SLEEP_TIME = 0.33
+
+    def __init__(self, server_link):
+        self.server_link = server_link
+
+    def press(self, floor):
+        self.server_link.call_cabin(floor)

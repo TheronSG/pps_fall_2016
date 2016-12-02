@@ -5,9 +5,9 @@ class Speaker:
         self.cabin_link = cabin_link
 
     def play_speech(self, message):
-        print('[Speaker {}] Type dispatchers\' answer'.format(self.cabin_link.cabin_num))
+        print('[Speaker {}] Type dispatchers\' answer'.format(self.cabin_link.cabin_num + 1))
         message = input()
-        print('[Speaker {}] Dispatcher says: '.format(self.cabin_link.cabin_num) + message)
+        print('[Speaker {}] Dispatcher says: '.format(self.cabin_link.cabin_num + 1) + message)
 
     def init(self):
-        print('[Speaker {}] Running...'.format(self.cabin_link.cabin_num))
+        print('[Speaker {}] Running...'.format(self.cabin_link.cabin_num + 1))

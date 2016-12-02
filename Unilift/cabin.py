@@ -34,7 +34,7 @@ class Cabin:
     def start_record_speaker_message(self):
         self.microphone.set_true_state()
 
-    def send_message_to_dispatcher_(self, message):
+    def send_message_to_dispatcher(self, message):
         self.speaker.play_speech(message)
 
     def light_on(self):

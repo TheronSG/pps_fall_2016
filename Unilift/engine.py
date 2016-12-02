@@ -35,7 +35,7 @@ class Engine:
                     if self.current_floor == self.target_floor:
                         self.target_floor = None
                         self.motion_state = self.MOTION_STATE['WAITING']
-                    print('[Engine {}] Current floor: {}'.format(self.engine_num,
+                    print('[Engine {}] Current floor: {}'.format(self.engine_num + 1,
                                                                  self.current_floor + 1))
                     self.server_link.receive_motion_params(self.engine_num,
                                                            self.get_motion_params())

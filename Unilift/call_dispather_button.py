@@ -18,10 +18,6 @@ class CallDispatcherButton:
     def main_cycle(self):
         while self.status:
             if self.state:
+                self.state = False
                 self.cabin_link.start_record_speaker_message()
             time.sleep(self.SLEEP_TIME)
-
-
-
-# TODO: Что дальше? Как вообще будем делать? Проверять все время @state на сервере или просто посылать сигнал на сервер
-# TODO: при изменении @state, а там он уже будет обрабатываться? Этот же вопрос и для других кнопок и действий.

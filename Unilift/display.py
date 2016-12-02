@@ -14,18 +14,18 @@ class Display:
         self.current_direction = direction
         # TODO:  Будем ли использовать три состояния?
         if direction == 1:
-            print('[Display {}] Moving up'.format(self.cabin_link.cabin_num))
+            print('[Display {}] Moving up'.format(self.cabin_link.cabin_num + 1))
         elif direction == -1:
-            print('[Display {}] Stay'.format(self.cabin_link.cabin_num))
+            print('[Display {}] Stay'.format(self.cabin_link.cabin_num + 1))
         else:
-            print('[Display {}] Moving down'.format(self.cabin_link.cabin_num))
+            print('[Display {}] Moving down'.format(self.cabin_link.cabin_num + 1))
 
     def set_cabin_floor(self, floor):
         self.current_cabin_floor = floor
-        print('[Display {}] Current floor {}'.format(self.cabin_link.cabin_num, floor))
+        print('[Display {}] Current floor {}'.format(self.cabin_link.cabin_num + 1, floor))
 
     def main_cycle(self):
-        print('[Display {}] Running...'.format(self.cabin_link.cabin_num))
+        print('[Display {}] Running...'.format(self.cabin_link.cabin_num + 1))
         while True:
             if ():
                 pass
