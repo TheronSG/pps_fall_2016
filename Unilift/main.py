@@ -5,7 +5,8 @@ from threading import Thread
 import time
 
 
-SLEEP_TIME = 10
+SLEEP_TIME = 0.33
+
 
 def print_available_command():
     print('To open door type: open <lift number>')
@@ -87,7 +88,9 @@ def handle(server, command):
             print('Error! The {} floor does not exist.'.format(parts[1]))
             return False
         call_dispatcher_buttons[parts[1] - 1].press()
-        time.sleep(SLEEP_TIME)
+        while not server.cabins[parts[1] - 1].speaker.get_state():
+            time.sleep(SLEEP_TIME)
+        server.cabins[parts[1] - 1].speaker.set_state()
 
     elif parts[0] == 'smoke':
         if len(parts) > 1:
@@ -136,7 +139,7 @@ if __name__ == '__main__':
     for thread in threads:
         thread.start()
 
-    time.sleep(0.5)
+    time.sleep(2 * SLEEP_TIME)
 
     print('Choose action:')
     print_available_command()

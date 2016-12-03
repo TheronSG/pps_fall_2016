@@ -43,8 +43,8 @@ class Cabin:
             print('[Cabin {}] Light was turned on'.format(self.cabin_num))
 
     def light_off(self):
-        if (self.light_state != self.LIGHT['OFF'] and
-                    self.doors_state not in (self.DOORS['OPENING'], self.DOORS['OPENED'], self.DOORS['CLOSING'])):
+        if (self.light_state != self.LIGHT['OFF'] and self.doors_state not in
+                (self.DOORS['OPENING'], self.DOORS['OPENED'], self.DOORS['CLOSING'])):
             self.light_state = self.LIGHT['OFF']
             print('[Cabin {}] Light was turned off'.format(self.cabin_num))
 
@@ -81,20 +81,20 @@ class Cabin:
             thread.start()
         doors_opened_time = 0
 
-        print('[Cabin {}] Running...'.format(self.cabin_num))
+        print('[Cabin {}] Running...'.format(self.cabin_num + 1))
         while True:
             if self.doors_state == self.DOORS['CLOSING']:
                 self.doors_closing_stage += 1
                 if self.doors_closing_stage >= self.DOORS_CLOSED_STAGE:
                     self.doors_state = self.DOORS['CLOSED']
                     self.doors_closing_stage = self.DOORS_CLOSED_STAGE
-                    print('[Cabin {}] Doors closed'.format(self.cabin_num))
+                    print('[Cabin {}] Doors closed'.format(self.cabin_num + 1))
             elif self.doors_state == self.DOORS['OPENING']:
                 self.doors_closing_stage -= 1
                 if self.doors_closing_stage <= self.DOORS_OPENED_STAGE:
                     self.doors_state = self.DOORS['OPENED']
                     self.doors_closing_stage = self.DOORS_OPENED_STAGE
-                    print('[Cabin {}] Doors opened'.format(self.cabin_num))
+                    print('[Cabin {}] Doors opened'.format(self.cabin_num + 1))
             elif self.doors_state == self.DOORS['OPENED']:
                 doors_opened_time += 1
                 if doors_opened_time == self.DOORS_OPENED_TIME:
