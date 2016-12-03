@@ -16,7 +16,8 @@ class Cabin:
     DOORS_OPENED_TIME = 10
     SLEEPING_TIME = 0.33
 
-    def __init__(self, cabin_num):
+    def __init__(self, server_link, cabin_num):
+        self.server_link = server_link
         self.cabin_num = cabin_num
         self.light_state = self.LIGHT['OFF']
         self.doors_state = self.DOORS['CLOSED']
@@ -34,8 +35,8 @@ class Cabin:
     def start_record_speaker_message(self):
         self.microphone.set_true_state()
 
-    def send_message_to_dispatcher(self, message):
-        self.speaker.play_speech(message)
+    def send_message_to_server(self, message):
+        self.server_link.send_message_to_dispatcher(message, self.cabin_num)
 
     def light_on(self):
         if self.light_state != self.LIGHT['ON']:

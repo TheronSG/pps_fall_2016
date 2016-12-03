@@ -12,7 +12,7 @@ class Microphone:
     def record_speech(self):
         print('[Microphone {}] Type your request'.format(self.cabin_link.cabin_num + 1))
         message = input()
-        self.cabin_link.send_message_to_dispatcher(message)
+        self.cabin_link.send_message_to_server(message)
 
     def set_true_state(self):
         self.state = True

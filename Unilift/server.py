@@ -20,7 +20,7 @@ class Server:
         for i in range(self.ELEVATORS_NUM):
             engine = Engine(self, i)
             self.engines.append(engine)
-            cabin = Cabin(i)
+            cabin = Cabin(self, i)
             self.cabins.append(cabin)
             self.motions_params.append(engine.get_motion_params())
         self._threads = []
@@ -36,12 +36,8 @@ class Server:
         if elevator_num is not None:
             self.engines[elevator_num].set_target_floor(new_target_floor)
 
-    def smoke_exit(self):
-        print("Alarm! Smoke is detected!")
-        #TODO: реализовать интерфейс
-        for i in range(self.ELEVATORS_NUM):
-            self.engines[i].set_end_status()
-            self.cabins[i].set_end_status()
+    def send_message_to_dispatcher(self, message, cabin_num):
+        self.cabins[cabin_num].speaker.play_speech(message)
 
     def receive_motion_params(self, engine_num, motion_params):
         self.motions_params[engine_num] = motion_params
