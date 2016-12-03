@@ -22,5 +22,5 @@ class SmokeSensor:
         print('[Smoke Sensor] Running...')
         while self.status:
             if self.check_smoke_level():
-                self.server_link.smoke_exit()
+                self.server_link.register_smoke_signal()
             time.sleep(self.SLEEP_TIME)

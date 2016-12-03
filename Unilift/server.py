@@ -12,9 +12,9 @@ class Server:
     def __init__(self):
         self.FLOORS_NUMBER = 10
         self.ELEVATORS_NUM = 2
+        self.elevators_motion_params = []
         self.engines = []
         self.cabins = []
-        self.motions_params = []
         self.motion_algo = SimpleMotionAlgorithm(self.ELEVATORS_NUM)
         self.smoke_sensor = SmokeSensor(self)
         for i in range(self.ELEVATORS_NUM):
@@ -22,21 +22,18 @@ class Server:
             self.engines.append(engine)
             cabin = Cabin(i)
             self.cabins.append(cabin)
-            self.motions_params.append(engine.get_motion_params())
+            self.elevators_motion_params.append(engine.get_motion_params())
         self._threads = []
         self.status = False
 
-    def set_end_status(self):
-        self.status = False
-
     def call_cabin(self, target_floor):
-        elevator_num, new_target_floor = self.motion_algo.add_target_floor(self.motions_params,
+        elevator_num, new_target_floor = self.motion_algo.add_target_floor(self.elevators_motion_params,
                                                                            target_floor,
                                                                            elevator_num=None)
         if elevator_num is not None:
             self.engines[elevator_num].set_target_floor(new_target_floor)
 
-    def smoke_exit(self):
+    def register_smoke_signal(self):
         print("Alarm! Smoke is detected!")
         #TODO: реализовать интерфейс
         for i in range(self.ELEVATORS_NUM):
@@ -44,7 +41,7 @@ class Server:
             self.cabins[i].set_end_status()
 
     def receive_motion_params(self, engine_num, motion_params):
-        self.motions_params[engine_num] = motion_params
+        self.elevators_motion_params[engine_num] = motion_params
 
     def run(self):
         for i in range(self.ELEVATORS_NUM):
@@ -60,7 +57,7 @@ class Server:
         waiting_states = [False] * self.ELEVATORS_NUM
         self.status = True
         while True:
-            for i, motion_params in enumerate(self.motions_params):
+            for i, motion_params in enumerate(self.elevators_motion_params):
                 if motion_params['motion_state'] == 'WAITING':
                     cabin_state = self.cabins[i].get_current_state()
                     if cabin_state['doors_state'] == 'CLOSED':
@@ -82,3 +79,6 @@ class Server:
 
         for thread in self._threads:
             thread.join()
+
+    def set_end_status(self):
+        self.status = False
