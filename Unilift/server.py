@@ -1,7 +1,6 @@
 from engine import Engine
 from cabin import Cabin
 from threading import Thread
-from smoke_sensor import SmokeSensor
 from simple_motion_algorithm import SimpleMotionAlgorithm
 import time
 
@@ -16,7 +15,6 @@ class Server:
         self.engines = []
         self.cabins = []
         self.motion_algo = SimpleMotionAlgorithm(self.ELEVATORS_NUM)
-        self.smoke_sensor = SmokeSensor(self)
         for i in range(self.ELEVATORS_NUM):
             engine = Engine(self, i)
             self.engines.append(engine)
@@ -43,7 +41,6 @@ class Server:
         for i in range(self.ELEVATORS_NUM):
             self._threads.append(Thread(target=self.engines[i].main_cycle))
             self._threads.append(Thread(target=self.cabins[i].main_cycle))
-        self._threads.append(Thread(target=self.smoke_sensor.main_cycle))
 
         for thread in self._threads:
             thread.start()
@@ -69,7 +66,6 @@ class Server:
                 for i in range(self.ELEVATORS_NUM):
                     self.engines[i].set_end_status()
                     self.cabins[i].set_end_status()
-                self.smoke_sensor.set_end_status()
                 break
             time.sleep(self.SLEEP_TIME)
 
