@@ -6,10 +6,10 @@ class WeightSensor:
     WEIGHT = {'LOW_WEIGHT': 2, 'NORMAL_WEIGHT': 1, 'HIGH_WEIGHT': 0,
               2: 'LOW_WEIGHT', 1: 'NORMAL_WEIGHT', 0: 'HIGH_WEIGHT'}
 
-    def __init__(self, cabin_link):
+    def __init__(self, elevator_link):
         self.min_weight = 10
         self.max_weight = 100
-        self.cabin_link = cabin_link
+        self.elevator_link = elevator_link
         self.weight = 0
         self.status = False
 
@@ -31,14 +31,14 @@ class WeightSensor:
         return {'weight': current_weight, 'weight_status': weight_status}
 
     def main_cycle(self):
-        print('[Weight Sensor {}] Running...'.format(self.cabin_link.cabin_num + 1))
+        print('[Weight Sensor {}] Running...'.format(self.elevator_link.elevator_num + 1))
         self.status = True
         while self.status:
             if self.min_weight <= self.get_current_weight() <= self.max_weight:
-                self.cabin_link.light_on()
+                self.elevator_link.light_on()
             elif self.get_current_weight() > self.max_weight:
-                self.cabin_link.light_on()
+                self.elevator_link.light_on()
                 pass
             else:
-                self.cabin_link.light_off()
+                self.elevator_link.light_off()
             time.sleep(self.SLEEP_TIME)

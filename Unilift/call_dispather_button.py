@@ -4,8 +4,8 @@ import time
 class CallDispatcherButton:
     SLEEP_TIME = 0.33
 
-    def __init__(self, cabin_link):
-        self.cabin_link = cabin_link
+    def __init__(self, elevator_link):
+        self.elevator_link = elevator_link
         self.state = False
         self.status = True
 
@@ -19,5 +19,5 @@ class CallDispatcherButton:
         while self.status:
             if self.state:
                 self.state = False
-                self.cabin_link.start_record_speaker_message()
+                self.elevator_link.start_record_speaker_message()
             time.sleep(self.SLEEP_TIME)
